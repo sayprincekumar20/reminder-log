@@ -49,6 +49,10 @@ const counterSchema = z.object({
 
 const payloadSchema = z.discriminatedUnion("type", [messageSchema, runSchema, counterSchema]);
 
+function compact<T extends Record<string, unknown>>(obj: T): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
+}
+
 function timingSafeEqualStr(a: string, b: string) {
   if (a.length !== b.length) return false;
   let diff = 0;
@@ -110,7 +114,7 @@ export const Route = createFileRoute("/api/public/n8n-logs")({
 
           const { error } = await supabaseAdmin
             .from("messages")
-            .insert({ ...message, client_id: clientId });
+            .insert(compact({ ...message, client_id: clientId }));
           if (error) {
             console.error("n8n message insert failed", error.message);
             return new Response("Could not store message", { status: 500 });
@@ -122,7 +126,7 @@ export const Route = createFileRoute("/api/public/n8n-logs")({
           const { type: _t, ...run } = payload;
           const { error } = await supabaseAdmin
             .from("daily_run_logs")
-            .upsert(run, { onConflict: "run_date" });
+            .upsert(compact(run) as { run_date: string }, { onConflict: "run_date" });
           if (error) {
             console.error("n8n run upsert failed", error.message);
             return new Response("Could not store run log", { status: 500 });
@@ -133,9 +137,12 @@ export const Route = createFileRoute("/api/public/n8n-logs")({
         const { type: _t, ...counter } = payload;
         const { error } = await supabaseAdmin
           .from("channel_counters")
-          .upsert({ ...counter, last_updated: new Date().toISOString() }, {
-            onConflict: "channel,date",
-          });
+          .upsert(
+            compact({ ...counter, last_updated: new Date().toISOString() }) as {
+              channel: string;
+            },
+            { onConflict: "channel,date" },
+          );
         if (error) {
           console.error("n8n counter upsert failed", error.message);
           return new Response("Could not store counter", { status: 500 });
