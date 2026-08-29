@@ -9,8 +9,8 @@ export function StatCard({
 }: {
   label: string;
   value: string;
-  hint?: string;
-  tone?: "default" | "primary";
+  hint?: string | undefined;
+  tone?: "default" | "primary" | undefined;
 }) {
   return (
     <div
@@ -100,8 +100,8 @@ export function Panel({
   children,
 }: {
   title: string;
-  description?: string;
-  action?: ReactNode;
+  description?: string | undefined;
+  action?: ReactNode | undefined;
   children: ReactNode;
 }) {
   return (
