@@ -15,6 +15,7 @@ import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as InboxChannelRouteImport } from './routes/inbox.$channel'
+import { Route as ApiPublicN8nLogsRouteImport } from './routes/api/public/n8n-logs'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const InboxChannelRoute = InboxChannelRouteImport.update({
   path: '/inbox/$channel',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicN8nLogsRoute = ApiPublicN8nLogsRouteImport.update({
+  id: '/api/public/n8n-logs',
+  path: '/api/public/n8n-logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
+  '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients': typeof ClientsIndexRoute
+  '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
+  '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients/'
+    | '/api/public/n8n-logs'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients'
+    | '/api/public/n8n-logs'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients/'
+    | '/api/public/n8n-logs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   ClientsClientIdRoute: typeof ClientsClientIdRoute
   InboxChannelRoute: typeof InboxChannelRoute
   ClientsIndexRoute: typeof ClientsIndexRoute
+  ApiPublicN8nLogsRoute: typeof ApiPublicN8nLogsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InboxChannelRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/n8n-logs': {
+      id: '/api/public/n8n-logs'
+      path: '/api/public/n8n-logs'
+      fullPath: '/api/public/n8n-logs'
+      preLoaderRoute: typeof ApiPublicN8nLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClientsClientIdRoute: ClientsClientIdRoute,
   InboxChannelRoute: InboxChannelRoute,
   ClientsIndexRoute: ClientsIndexRoute,
+  ApiPublicN8nLogsRoute: ApiPublicN8nLogsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
