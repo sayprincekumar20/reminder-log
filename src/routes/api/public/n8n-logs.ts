@@ -114,7 +114,7 @@ export const Route = createFileRoute("/api/public/n8n-logs")({
 
           const { error } = await supabaseAdmin
             .from("messages")
-            .insert(compact({ ...message, client_id: clientId }));
+            .insert(compact({ ...message, client_id: clientId }) as { channel: string });
           if (error) {
             console.error("n8n message insert failed", error.message);
             return new Response("Could not store message", { status: 500 });
