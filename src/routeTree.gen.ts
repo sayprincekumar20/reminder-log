@@ -16,6 +16,7 @@ import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as InboxChannelRouteImport } from './routes/inbox.$channel'
 import { Route as ApiPublicN8nLogsRouteImport } from './routes/api/public/n8n-logs'
+import { Route as ApiPublicTelerivetImportRouteImport } from './routes/api/public/telerivet-import'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +53,12 @@ const ApiPublicN8nLogsRoute = ApiPublicN8nLogsRouteImport.update({
   path: '/api/public/n8n-logs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTelerivetImportRoute =
+  ApiPublicTelerivetImportRouteImport.update({
+    id: '/api/public/telerivet-import',
+    path: '/api/public/telerivet-import',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
   '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
+  '/api/public/telerivet-import': typeof ApiPublicTelerivetImportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +78,7 @@ export interface FileRoutesByTo {
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients': typeof ClientsIndexRoute
   '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
+  '/api/public/telerivet-import': typeof ApiPublicTelerivetImportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +89,7 @@ export interface FileRoutesById {
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
   '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
+  '/api/public/telerivet-import': typeof ApiPublicTelerivetImportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +101,7 @@ export interface FileRouteTypes {
     | '/inbox/$channel'
     | '/clients/'
     | '/api/public/n8n-logs'
+    | '/api/public/telerivet-import'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +111,7 @@ export interface FileRouteTypes {
     | '/inbox/$channel'
     | '/clients'
     | '/api/public/n8n-logs'
+    | '/api/public/telerivet-import'
   id:
     | '__root__'
     | '/'
@@ -109,6 +121,7 @@ export interface FileRouteTypes {
     | '/inbox/$channel'
     | '/clients/'
     | '/api/public/n8n-logs'
+    | '/api/public/telerivet-import'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +132,7 @@ export interface RootRouteChildren {
   InboxChannelRoute: typeof InboxChannelRoute
   ClientsIndexRoute: typeof ClientsIndexRoute
   ApiPublicN8nLogsRoute: typeof ApiPublicN8nLogsRoute
+  ApiPublicTelerivetImportRoute: typeof ApiPublicTelerivetImportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +186,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicN8nLogsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/telerivet-import': {
+      id: '/api/public/telerivet-import'
+      path: '/api/public/telerivet-import'
+      fullPath: '/api/public/telerivet-import'
+      preLoaderRoute: typeof ApiPublicTelerivetImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -183,6 +204,7 @@ const rootRouteChildren: RootRouteChildren = {
   InboxChannelRoute: InboxChannelRoute,
   ClientsIndexRoute: ClientsIndexRoute,
   ApiPublicN8nLogsRoute: ApiPublicN8nLogsRoute,
+  ApiPublicTelerivetImportRoute: ApiPublicTelerivetImportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
