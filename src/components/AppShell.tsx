@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { useLiveCollections } from "@/hooks/useLiveCollections";
+import { LiveIndicator } from "@/components/collections/LiveIndicator";
 import type { ReactNode } from "react";
 import {
   LayoutDashboard,
@@ -41,6 +43,8 @@ export function AppShell({
   actions?: ReactNode;
   children: ReactNode;
 }) {
+  const { status, lastEventAt } = useLiveCollections();
+
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-ink px-4 py-5 lg:flex">
@@ -96,6 +100,9 @@ export function AppShell({
             Automation
           </p>
           <p className="mt-1 text-xs text-ink-foreground">n8n webhook connected</p>
+          <div className="mt-2">
+            <LiveIndicator status={status} lastEventAt={lastEventAt} compact />
+          </div>
         </div>
       </aside>
 
@@ -108,7 +115,10 @@ export function AppShell({
                 <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
               ) : null}
             </div>
-            {actions}
+            <div className="flex items-center gap-3">
+              <LiveIndicator status={status} lastEventAt={lastEventAt} />
+              {actions}
+            </div>
           </div>
           <nav className="mt-3 flex gap-1 overflow-x-auto lg:hidden">
             {[...nav].map((item) => (
