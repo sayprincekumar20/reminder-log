@@ -144,7 +144,7 @@ export const Route = createFileRoute("/api/public/n8n-conversation")({
             (t.email ? byEmail.get(t.email.toLowerCase()) : undefined);
 
           if (!clientId) {
-            const name = t.client_name ?? t.phone ?? t.email ?? key || "Unknown contact";
+            const name = t.client_name ?? t.phone ?? t.email ?? (key || "Unknown contact");
             const { data: newClient } = await supabaseAdmin
               .from("clients")
               .insert({
