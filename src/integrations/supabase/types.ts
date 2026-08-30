@@ -189,15 +189,19 @@ export type Database = {
           direction: string
           duration_seconds: number | null
           error_message: string | null
+          has_attachment: boolean
           id: string
           is_fallback: boolean
+          notified_ar: boolean
           occurred_at: string
+          promise_recorded: boolean
           provider: string | null
           provider_message_id: string | null
           recording_url: string | null
           status: string
           subject: string | null
           transcript: string | null
+          turn_id: string | null
         }
         Insert: {
           agent_name?: string | null
@@ -208,15 +212,19 @@ export type Database = {
           direction?: string
           duration_seconds?: number | null
           error_message?: string | null
+          has_attachment?: boolean
           id?: string
           is_fallback?: boolean
+          notified_ar?: boolean
           occurred_at?: string
+          promise_recorded?: boolean
           provider?: string | null
           provider_message_id?: string | null
           recording_url?: string | null
           status?: string
           subject?: string | null
           transcript?: string | null
+          turn_id?: string | null
         }
         Update: {
           agent_name?: string | null
@@ -227,15 +235,19 @@ export type Database = {
           direction?: string
           duration_seconds?: number | null
           error_message?: string | null
+          has_attachment?: boolean
           id?: string
           is_fallback?: boolean
+          notified_ar?: boolean
           occurred_at?: string
+          promise_recorded?: boolean
           provider?: string | null
           provider_message_id?: string | null
           recording_url?: string | null
           status?: string
           subject?: string | null
           transcript?: string | null
+          turn_id?: string | null
         }
         Relationships: [
           {
