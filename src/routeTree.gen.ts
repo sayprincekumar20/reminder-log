@@ -15,6 +15,7 @@ import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as InboxChannelRouteImport } from './routes/inbox.$channel'
+import { Route as ApiPublicN8nConversationRouteImport } from './routes/api/public/n8n-conversation'
 import { Route as ApiPublicN8nLogsRouteImport } from './routes/api/public/n8n-logs'
 import { Route as ApiPublicTelerivetImportRouteImport } from './routes/api/public/telerivet-import'
 
@@ -48,6 +49,12 @@ const InboxChannelRoute = InboxChannelRouteImport.update({
   path: '/inbox/$channel',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicN8nConversationRoute =
+  ApiPublicN8nConversationRouteImport.update({
+    id: '/api/public/n8n-conversation',
+    path: '/api/public/n8n-conversation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicN8nLogsRoute = ApiPublicN8nLogsRouteImport.update({
   id: '/api/public/n8n-logs',
   path: '/api/public/n8n-logs',
@@ -67,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
+  '/api/public/n8n-conversation': typeof ApiPublicN8nConversationRoute
   '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
   '/api/public/telerivet-import': typeof ApiPublicTelerivetImportRoute
 }
@@ -77,6 +85,7 @@ export interface FileRoutesByTo {
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients': typeof ClientsIndexRoute
+  '/api/public/n8n-conversation': typeof ApiPublicN8nConversationRoute
   '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
   '/api/public/telerivet-import': typeof ApiPublicTelerivetImportRoute
 }
@@ -88,6 +97,7 @@ export interface FileRoutesById {
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
+  '/api/public/n8n-conversation': typeof ApiPublicN8nConversationRoute
   '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
   '/api/public/telerivet-import': typeof ApiPublicTelerivetImportRoute
 }
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients/'
+    | '/api/public/n8n-conversation'
     | '/api/public/n8n-logs'
     | '/api/public/telerivet-import'
   fileRoutesByTo: FileRoutesByTo
@@ -110,6 +121,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients'
+    | '/api/public/n8n-conversation'
     | '/api/public/n8n-logs'
     | '/api/public/telerivet-import'
   id:
@@ -120,6 +132,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients/'
+    | '/api/public/n8n-conversation'
     | '/api/public/n8n-logs'
     | '/api/public/telerivet-import'
   fileRoutesById: FileRoutesById
@@ -131,6 +144,7 @@ export interface RootRouteChildren {
   ClientsClientIdRoute: typeof ClientsClientIdRoute
   InboxChannelRoute: typeof InboxChannelRoute
   ClientsIndexRoute: typeof ClientsIndexRoute
+  ApiPublicN8nConversationRoute: typeof ApiPublicN8nConversationRoute
   ApiPublicN8nLogsRoute: typeof ApiPublicN8nLogsRoute
   ApiPublicTelerivetImportRoute: typeof ApiPublicTelerivetImportRoute
 }
@@ -179,6 +193,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InboxChannelRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/n8n-conversation': {
+      id: '/api/public/n8n-conversation'
+      path: '/api/public/n8n-conversation'
+      fullPath: '/api/public/n8n-conversation'
+      preLoaderRoute: typeof ApiPublicN8nConversationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/n8n-logs': {
       id: '/api/public/n8n-logs'
       path: '/api/public/n8n-logs'
@@ -203,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClientsClientIdRoute: ClientsClientIdRoute,
   InboxChannelRoute: InboxChannelRoute,
   ClientsIndexRoute: ClientsIndexRoute,
+  ApiPublicN8nConversationRoute: ApiPublicN8nConversationRoute,
   ApiPublicN8nLogsRoute: ApiPublicN8nLogsRoute,
   ApiPublicTelerivetImportRoute: ApiPublicTelerivetImportRoute,
 }
