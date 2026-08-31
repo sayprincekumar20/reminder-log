@@ -56,6 +56,9 @@ export interface MessageRow {
   duration_seconds: number | null;
   transcript: string | null;
   agent_name: string | null;
+  promise_recorded: boolean;
+  notified_ar: boolean;
+  has_attachment: boolean;
   occurred_at: string;
 }
 
