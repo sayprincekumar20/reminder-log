@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Panel, StatusPill, StatCard, ChannelBadge } from "@/components/collections/Bits";
@@ -11,6 +12,7 @@ import {
   shortDate,
   timeAgo,
 } from "@/lib/collections";
+import { setMessageFlags } from "@/lib/messages.functions";
 
 export const Route = createFileRoute("/inbox/$channel")({
   head: ({ params }) => {
@@ -44,6 +46,13 @@ function ChannelInbox() {
   const meta = channelMeta(channel);
   const { data: clients } = useSuspenseQuery(clientsQuery);
   const { data: messages } = useSuspenseQuery(messagesQuery);
+  const queryClient = useQueryClient();
+  const updateFlags = useServerFn(setMessageFlags);
+  const flagMutation = useMutation({
+    mutationFn: (input: { id: string; promise_recorded?: boolean; notified_ar?: boolean }) =>
+      updateFlags({ data: input }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["messages"] }),
+  });
 
   const channelMessages = messages.filter((m) => m.channel === channel);
   const threadIds = Array.from(new Set(channelMessages.map((m) => m.client_id)));
@@ -61,7 +70,7 @@ function ChannelInbox() {
       title={`${meta.label} Inbox`}
       subtitle={`Delivered through ${meta.provider} · relayed by n8n`}
     >
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-5">
         <StatCard label="Conversations" value={String(threadIds.length)} tone="primary" />
         <StatCard
           label="Outbound"
@@ -70,6 +79,16 @@ function ChannelInbox() {
         <StatCard
           label="Replies received"
           value={String(channelMessages.filter((m) => m.direction === "inbound").length)}
+        />
+        <StatCard
+          label="Promises to pay"
+          value={String(channelMessages.filter((m) => m.promise_recorded).length)}
+          hint="Client committed to a payment date"
+        />
+        <StatCard
+          label="AR notified"
+          value={String(channelMessages.filter((m) => m.notified_ar).length)}
+          hint="Overdue reminder escalated to AR"
         />
       </div>
 
@@ -98,6 +117,14 @@ function ChannelInbox() {
                     <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
                       {last?.subject ?? last?.body ?? "—"}
                     </p>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {channelMessages.some((m) => m.client_id === id && m.promise_recorded) ? (
+                        <FlagTag kind="promise" />
+                      ) : null}
+                      {channelMessages.some((m) => m.client_id === id && m.notified_ar) ? (
+                        <FlagTag kind="ar" />
+                      ) : null}
+                    </div>
                   </button>
                 </li>
               );
@@ -160,7 +187,29 @@ function ChannelInbox() {
                       </p>
                     ) : null}
                   </div>
-                  <StatusPill status={m.status} />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusPill status={m.status} />
+                    {m.promise_recorded ? <FlagTag kind="promise" /> : null}
+                    {m.notified_ar ? <FlagTag kind="ar" /> : null}
+                    <button
+                      type="button"
+                      disabled={flagMutation.isPending}
+                      onClick={() =>
+                        flagMutation.mutate({ id: m.id, promise_recorded: !m.promise_recorded })
+                      }
+                      className="rounded-full border border-border px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground transition-colors hover:bg-muted disabled:opacity-50"
+                    >
+                      {m.promise_recorded ? "Clear promise" : "Mark promise to pay"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={flagMutation.isPending}
+                      onClick={() => flagMutation.mutate({ id: m.id, notified_ar: !m.notified_ar })}
+                      className="rounded-full border border-border px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground transition-colors hover:bg-muted disabled:opacity-50"
+                    >
+                      {m.notified_ar ? "Clear AR notice" : "Mark AR notified"}
+                    </button>
+                  </div>
                 </li>
               );
             })}
@@ -171,5 +220,20 @@ function ChannelInbox() {
         </Panel>
       </div>
     </AppShell>
+  );
+}
+
+function FlagTag({ kind }: { kind: "promise" | "ar" }) {
+  const promise = kind === "promise";
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+      style={{
+        color: promise ? "var(--whatsapp)" : "var(--primary)",
+        backgroundColor: `color-mix(in oklab, ${promise ? "var(--whatsapp)" : "var(--primary)"} 14%, transparent)`,
+      }}
+    >
+      {promise ? "Promise to pay" : "AR notified"}
+    </span>
   );
 }
