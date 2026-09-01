@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/AppShell";
-import { StatCard, Panel, ChannelBadge, StatusPill } from "@/components/collections/Bits";
+import { StatCard, Panel, ChannelBadge, StatusPill, TimeAgo } from "@/components/collections/Bits";
 import {
   CHANNELS,
   clientsQuery,

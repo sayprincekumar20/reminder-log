@@ -3,7 +3,7 @@ import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-q
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
-import { Panel, StatusPill, StatCard, ChannelBadge } from "@/components/collections/Bits";
+import { Panel, StatusPill, StatCard, ChannelBadge, TimeAgo } from "@/components/collections/Bits";
 import {
   channelMeta,
   clientsQuery,
