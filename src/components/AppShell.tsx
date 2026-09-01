@@ -17,6 +17,7 @@ import {
 const nav = [
   { to: "/", label: "Overview", icon: LayoutDashboard },
   { to: "/clients", label: "Clients", icon: Users },
+  { to: "/email", label: "Email", icon: Mail },
   { to: "/queue", label: "Reminder Queue", icon: ListChecks },
   { to: "/reports", label: "Reports", icon: FileBarChart },
 ] as const;
@@ -25,7 +26,6 @@ const inboxes = [
   { channel: "whatsapp", label: "WhatsApp", icon: MessageSquare },
   { channel: "viber", label: "Viber", icon: MessageCircle },
   { channel: "sms", label: "SMS", icon: Smartphone },
-  { channel: "email", label: "Email", icon: Mail },
   { channel: "voice", label: "Voice", icon: Phone },
 ] as const;
 

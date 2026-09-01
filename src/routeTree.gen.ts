@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmailRouteImport } from './routes/email'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ApiGmailThreadDetailRouteImport } from './routes/api/gmail-thread-detail'
@@ -24,6 +25,11 @@ import { Route as ApiPublicTelerivetImportRouteImport } from './routes/api/publi
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailRoute = EmailRouteImport.update({
+  id: '/email',
+  path: '/email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QueueRoute = QueueRouteImport.update({
@@ -81,6 +87,7 @@ const ApiPublicTelerivetImportRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/email': typeof EmailRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
   '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/email': typeof EmailRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
   '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
@@ -108,6 +116,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/email': typeof EmailRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
   '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/email'
     | '/queue'
     | '/reports'
     | '/api/gmail-thread-detail'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/email'
     | '/queue'
     | '/reports'
     | '/api/gmail-thread-detail'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/email'
     | '/queue'
     | '/reports'
     | '/api/gmail-thread-detail'
@@ -163,6 +175,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmailRoute: typeof EmailRoute
   QueueRoute: typeof QueueRoute
   ReportsRoute: typeof ReportsRoute
   ApiGmailThreadDetailRoute: typeof ApiGmailThreadDetailRoute
@@ -182,6 +195,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email': {
+      id: '/email'
+      path: '/email'
+      fullPath: '/email'
+      preLoaderRoute: typeof EmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/queue': {
@@ -259,6 +279,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmailRoute: EmailRoute,
   QueueRoute: QueueRoute,
   ReportsRoute: ReportsRoute,
   ApiGmailThreadDetailRoute: ApiGmailThreadDetailRoute,
