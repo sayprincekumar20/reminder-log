@@ -10,8 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmailRouteImport } from './routes/email'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ApiGmailThreadDetailRouteImport } from './routes/api/gmail-thread-detail'
+import { Route as ApiGmailThreadsListRouteImport } from './routes/api/gmail-threads-list'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as InboxChannelRouteImport } from './routes/inbox.$channel'
@@ -24,6 +27,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmailRoute = EmailRouteImport.update({
+  id: '/email',
+  path: '/email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QueueRoute = QueueRouteImport.update({
   id: '/queue',
   path: '/queue',
@@ -32,6 +40,16 @@ const QueueRoute = QueueRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGmailThreadDetailRoute = ApiGmailThreadDetailRouteImport.update({
+  id: '/api/gmail-thread-detail',
+  path: '/api/gmail-thread-detail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGmailThreadsListRoute = ApiGmailThreadsListRouteImport.update({
+  id: '/api/gmail-threads-list',
+  path: '/api/gmail-threads-list',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientsIndexRoute = ClientsIndexRouteImport.update({
@@ -69,8 +87,11 @@ const ApiPublicTelerivetImportRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/email': typeof EmailRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
+  '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
@@ -80,8 +101,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/email': typeof EmailRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
+  '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients': typeof ClientsIndexRoute
@@ -92,8 +116,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/email': typeof EmailRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
+  '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
@@ -105,8 +132,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/email'
     | '/queue'
     | '/reports'
+    | '/api/gmail-thread-detail'
+    | '/api/gmail-threads-list'
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients/'
@@ -116,8 +146,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/email'
     | '/queue'
     | '/reports'
+    | '/api/gmail-thread-detail'
+    | '/api/gmail-threads-list'
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients'
@@ -127,8 +160,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/email'
     | '/queue'
     | '/reports'
+    | '/api/gmail-thread-detail'
+    | '/api/gmail-threads-list'
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients/'
@@ -139,8 +175,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmailRoute: typeof EmailRoute
   QueueRoute: typeof QueueRoute
   ReportsRoute: typeof ReportsRoute
+  ApiGmailThreadDetailRoute: typeof ApiGmailThreadDetailRoute
+  ApiGmailThreadsListRoute: typeof ApiGmailThreadsListRoute
   ClientsClientIdRoute: typeof ClientsClientIdRoute
   InboxChannelRoute: typeof InboxChannelRoute
   ClientsIndexRoute: typeof ClientsIndexRoute
@@ -158,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/email': {
+      id: '/email'
+      path: '/email'
+      fullPath: '/email'
+      preLoaderRoute: typeof EmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/queue': {
       id: '/queue'
       path: '/queue'
@@ -170,6 +216,20 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gmail-thread-detail': {
+      id: '/api/gmail-thread-detail'
+      path: '/api/gmail-thread-detail'
+      fullPath: '/api/gmail-thread-detail'
+      preLoaderRoute: typeof ApiGmailThreadDetailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gmail-threads-list': {
+      id: '/api/gmail-threads-list'
+      path: '/api/gmail-threads-list'
+      fullPath: '/api/gmail-threads-list'
+      preLoaderRoute: typeof ApiGmailThreadsListRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clients/': {
@@ -219,8 +279,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmailRoute: EmailRoute,
   QueueRoute: QueueRoute,
   ReportsRoute: ReportsRoute,
+  ApiGmailThreadDetailRoute: ApiGmailThreadDetailRoute,
+  ApiGmailThreadsListRoute: ApiGmailThreadsListRoute,
   ClientsClientIdRoute: ClientsClientIdRoute,
   InboxChannelRoute: InboxChannelRoute,
   ClientsIndexRoute: ClientsIndexRoute,
