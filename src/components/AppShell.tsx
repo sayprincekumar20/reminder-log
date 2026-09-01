@@ -17,16 +17,16 @@ import {
 const nav = [
   { to: "/", label: "Overview", icon: LayoutDashboard },
   { to: "/clients", label: "Clients", icon: Users },
-  { to: "/email", label: "Email", icon: Mail },
   { to: "/queue", label: "Reminder Queue", icon: ListChecks },
   { to: "/reports", label: "Reports", icon: FileBarChart },
 ] as const;
 
 const inboxes = [
-  { channel: "whatsapp", label: "WhatsApp", icon: MessageSquare },
-  { channel: "viber", label: "Viber", icon: MessageCircle },
-  { channel: "sms", label: "SMS", icon: Smartphone },
-  { channel: "voice", label: "Voice", icon: Phone },
+  { to: "/inbox/whatsapp", label: "WhatsApp", icon: MessageSquare },
+  { to: "/inbox/viber", label: "Viber", icon: MessageCircle },
+  { to: "/inbox/sms", label: "SMS", icon: Smartphone },
+  { to: "/inbox/voice", label: "Voice", icon: Phone },
+  { to: "/email", label: "Email", icon: Mail },
 ] as const;
 
 const linkBase =
