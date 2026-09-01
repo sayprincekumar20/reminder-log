@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ApiGmailThreadsListRouteImport } from './routes/api/gmail-threads-list'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as InboxChannelRouteImport } from './routes/inbox.$channel'
@@ -32,6 +33,11 @@ const QueueRoute = QueueRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGmailThreadsListRoute = ApiGmailThreadsListRouteImport.update({
+  id: '/api/gmail-threads-list',
+  path: '/api/gmail-threads-list',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientsIndexRoute = ClientsIndexRouteImport.update({
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients': typeof ClientsIndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
   '/clients/': typeof ClientsIndexRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/queue'
     | '/reports'
+    | '/api/gmail-threads-list'
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients/'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/'
     | '/queue'
     | '/reports'
+    | '/api/gmail-threads-list'
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/'
     | '/queue'
     | '/reports'
+    | '/api/gmail-threads-list'
     | '/clients/$clientId'
     | '/inbox/$channel'
     | '/clients/'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   QueueRoute: typeof QueueRoute
   ReportsRoute: typeof ReportsRoute
+  ApiGmailThreadsListRoute: typeof ApiGmailThreadsListRoute
   ClientsClientIdRoute: typeof ClientsClientIdRoute
   InboxChannelRoute: typeof InboxChannelRoute
   ClientsIndexRoute: typeof ClientsIndexRoute
@@ -170,6 +183,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gmail-threads-list': {
+      id: '/api/gmail-threads-list'
+      path: '/api/gmail-threads-list'
+      fullPath: '/api/gmail-threads-list'
+      preLoaderRoute: typeof ApiGmailThreadsListRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clients/': {
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   QueueRoute: QueueRoute,
   ReportsRoute: ReportsRoute,
+  ApiGmailThreadsListRoute: ApiGmailThreadsListRoute,
   ClientsClientIdRoute: ClientsClientIdRoute,
   InboxChannelRoute: InboxChannelRoute,
   ClientsIndexRoute: ClientsIndexRoute,
