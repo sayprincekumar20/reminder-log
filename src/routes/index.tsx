@@ -11,7 +11,6 @@ import {
   queueQuery,
   runLogsQuery,
   shortDate,
-  timeAgo,
 } from "@/lib/collections";
 
 export const Route = createFileRoute("/")({
@@ -149,7 +148,7 @@ function Overview() {
                     <div className="flex items-center gap-2">
                       <StatusPill status={m.status} />
                       <span className="text-xs text-muted-foreground">
-                        {timeAgo(m.occurred_at)}
+                        <TimeAgo value={m.occurred_at} />
                       </span>
                     </div>
                   </li>

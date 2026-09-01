@@ -10,7 +10,6 @@ import {
   messagesQuery,
   peso,
   shortDate,
-  timeAgo,
 } from "@/lib/collections";
 import { setMessageFlags } from "@/lib/messages.functions";
 
@@ -111,7 +110,7 @@ function ChannelInbox() {
                         {c?.client_name ?? "Unknown"}
                       </span>
                       <span className="shrink-0 text-[11px] text-muted-foreground">
-                        {last ? timeAgo(last.occurred_at) : ""}
+                        {last ? <TimeAgo value={last.occurred_at} /> : ""}
                       </span>
                     </div>
                     <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">

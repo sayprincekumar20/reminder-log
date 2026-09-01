@@ -11,7 +11,6 @@ import {
   peso,
   queueQuery,
   shortDate,
-  timeAgo,
 } from "@/lib/collections";
 
 export const Route = createFileRoute("/clients/$clientId")({
@@ -120,7 +119,7 @@ function ClientDetail() {
                     <div className="flex items-center gap-2">
                       <ChannelBadge channel={m.channel} />
                       <span className="text-[11px] text-muted-foreground">
-                        {m.provider ?? "—"} · {shortDate(m.occurred_at)} · {timeAgo(m.occurred_at)}
+                        {m.provider ?? "—"} · {shortDate(m.occurred_at)} · <TimeAgo value={m.occurred_at} />
                       </span>
                     </div>
                     <div

@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { channelMeta, peso } from "@/lib/collections";
+import { useEffect, useState, type ReactNode } from "react";
+import { channelMeta, peso, timeAgo } from "@/lib/collections";
 
 export function StatCard({
   label,
@@ -122,4 +122,14 @@ export function Panel({
 
 export function Amount({ value }: { value: number }) {
   return <span className="font-semibold tabular-nums">{peso(value)}</span>;
+}
+
+export function TimeAgo({ value }: { value: string }) {
+  const [label, setLabel] = useState("");
+  useEffect(() => {
+    setLabel(timeAgo(value));
+    const id = setInterval(() => setLabel(timeAgo(value)), 60000);
+    return () => clearInterval(id);
+  }, [value]);
+  return <>{label}</>;
 }
