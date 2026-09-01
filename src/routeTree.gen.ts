@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ApiGmailThreadDetailRouteImport } from './routes/api/gmail-thread-detail'
 import { Route as ApiGmailThreadsListRouteImport } from './routes/api/gmail-threads-list'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
@@ -33,6 +34,11 @@ const QueueRoute = QueueRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGmailThreadDetailRoute = ApiGmailThreadDetailRouteImport.update({
+  id: '/api/gmail-thread-detail',
+  path: '/api/gmail-thread-detail',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGmailThreadsListRoute = ApiGmailThreadsListRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
   '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
   '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
   '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/inbox/$channel': typeof InboxChannelRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/queue'
     | '/reports'
+    | '/api/gmail-thread-detail'
     | '/api/gmail-threads-list'
     | '/clients/$clientId'
     | '/inbox/$channel'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/queue'
     | '/reports'
+    | '/api/gmail-thread-detail'
     | '/api/gmail-threads-list'
     | '/clients/$clientId'
     | '/inbox/$channel'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/'
     | '/queue'
     | '/reports'
+    | '/api/gmail-thread-detail'
     | '/api/gmail-threads-list'
     | '/clients/$clientId'
     | '/inbox/$channel'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   QueueRoute: typeof QueueRoute
   ReportsRoute: typeof ReportsRoute
+  ApiGmailThreadDetailRoute: typeof ApiGmailThreadDetailRoute
   ApiGmailThreadsListRoute: typeof ApiGmailThreadsListRoute
   ClientsClientIdRoute: typeof ClientsClientIdRoute
   InboxChannelRoute: typeof InboxChannelRoute
@@ -183,6 +196,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gmail-thread-detail': {
+      id: '/api/gmail-thread-detail'
+      path: '/api/gmail-thread-detail'
+      fullPath: '/api/gmail-thread-detail'
+      preLoaderRoute: typeof ApiGmailThreadDetailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/gmail-threads-list': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   QueueRoute: QueueRoute,
   ReportsRoute: ReportsRoute,
+  ApiGmailThreadDetailRoute: ApiGmailThreadDetailRoute,
   ApiGmailThreadsListRoute: ApiGmailThreadsListRoute,
   ClientsClientIdRoute: ClientsClientIdRoute,
   InboxChannelRoute: InboxChannelRoute,
