@@ -3,14 +3,13 @@ import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-q
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
-import { Panel, StatusPill, StatCard, ChannelBadge } from "@/components/collections/Bits";
+import { Panel, StatusPill, StatCard, ChannelBadge, TimeAgo } from "@/components/collections/Bits";
 import {
   channelMeta,
   clientsQuery,
   messagesQuery,
   peso,
   shortDate,
-  timeAgo,
 } from "@/lib/collections";
 import { setMessageFlags } from "@/lib/messages.functions";
 
@@ -111,7 +110,7 @@ function ChannelInbox() {
                         {c?.client_name ?? "Unknown"}
                       </span>
                       <span className="shrink-0 text-[11px] text-muted-foreground">
-                        {last ? timeAgo(last.occurred_at) : ""}
+                        {last ? <TimeAgo value={last.occurred_at} /> : ""}
                       </span>
                     </div>
                     <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
