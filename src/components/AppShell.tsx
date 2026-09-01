@@ -83,9 +83,8 @@ export function AppShell({
         <nav className="space-y-1">
           {inboxes.map((item) => (
             <Link
-              key={item.channel}
-              to="/inbox/$channel"
-              params={{ channel: item.channel }}
+              key={item.to}
+              to={item.to}
               className={linkBase}
               activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary" }}
             >
@@ -134,9 +133,8 @@ export function AppShell({
             ))}
             {inboxes.map((item) => (
               <Link
-                key={item.channel}
-                to="/inbox/$channel"
-                params={{ channel: item.channel }}
+                key={item.to}
+                to={item.to}
                 className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground"
                 activeProps={{ className: "bg-secondary text-secondary-foreground" }}
               >
