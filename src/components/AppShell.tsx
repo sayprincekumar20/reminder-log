@@ -112,15 +112,7 @@ export function AppShell({
         </p>
         <nav className="space-y-1">
           {inboxes.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={linkBase}
-              activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary" }}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
+            <InboxLink key={item.channel} item={item} className={linkBase} />
           ))}
         </nav>
 
