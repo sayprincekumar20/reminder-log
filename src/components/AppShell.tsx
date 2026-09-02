@@ -22,12 +22,42 @@ const nav = [
 ] as const;
 
 const inboxes = [
-  { to: "/inbox/whatsapp", label: "WhatsApp", icon: MessageSquare },
-  { to: "/inbox/viber", label: "Viber", icon: MessageCircle },
-  { to: "/inbox/sms", label: "SMS", icon: Smartphone },
-  { to: "/inbox/voice", label: "Voice", icon: Phone },
-  { to: "/email", label: "Email", icon: Mail },
-] as const;
+  { channel: "whatsapp", label: "WhatsApp", icon: MessageSquare },
+  { channel: "viber", label: "Viber", icon: MessageCircle },
+  { channel: "sms", label: "SMS", icon: Smartphone },
+  { channel: "email", label: "Email", icon: Mail, to: "/email" as const },
+  { channel: "voice", label: "Voice", icon: Phone },
+] satisfies InboxItem[];
+
+type InboxItem = {
+  channel: string;
+  label: string;
+  icon: typeof Mail;
+  to?: "/email";
+};
+
+function InboxLink({ item, className }: { item: InboxItem; className: string }) {
+  const activeProps = { className: "bg-primary text-primary-foreground hover:bg-primary" };
+  if ("to" in item) {
+    return (
+      <Link to={item.to} className={className} activeProps={activeProps}>
+        <item.icon className="h-4 w-4" />
+        {item.label}
+      </Link>
+    );
+  }
+  return (
+    <Link
+      to="/inbox/$channel"
+      params={{ channel: item.channel }}
+      className={className}
+      activeProps={activeProps}
+    >
+      <item.icon className="h-4 w-4" />
+      {item.label}
+    </Link>
+  );
+}
 
 const linkBase =
   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink-hover hover:text-ink-foreground";
@@ -82,15 +112,7 @@ export function AppShell({
         </p>
         <nav className="space-y-1">
           {inboxes.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={linkBase}
-              activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary" }}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
+            <InboxLink key={item.channel} item={item} className={linkBase} />
           ))}
         </nav>
 
@@ -132,14 +154,11 @@ export function AppShell({
               </Link>
             ))}
             {inboxes.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
+              <InboxLink
+                key={item.channel}
+                item={item}
                 className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground"
-                activeProps={{ className: "bg-secondary text-secondary-foreground" }}
-              >
-                {item.label}
-              </Link>
+              />
             ))}
           </nav>
         </header>

@@ -1,7 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { Panel, StatCard, ChannelBadge } from "@/components/collections/Bits";
+import { clientsQuery, peso, shortDate } from "@/lib/collections";
 
 export const Route = createFileRoute("/email")({
   head: () => ({
@@ -21,7 +23,10 @@ export const Route = createFileRoute("/email")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: EmailTab,
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(clientsQuery);
+  },
+  component: EmailInbox,
 });
 
 interface ThreadListItem {
@@ -57,30 +62,6 @@ interface ThreadDetail {
   threadId: string;
   subject: string;
   messages: ThreadMessage[];
-}
-
-function formatListDate(ts: string): string {
-  if (!ts) return "";
-  try {
-    return new Date(ts).toLocaleDateString("en-PH", { month: "short", day: "numeric" });
-  } catch {
-    return ts;
-  }
-}
-
-function formatMsgDate(dateHeader: string): string {
-  if (!dateHeader) return "";
-  try {
-    return new Date(dateHeader).toLocaleString("en-PH", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return dateHeader;
-  }
 }
 
 function isHtmlBody(body: string): boolean {
@@ -120,164 +101,178 @@ function MessageBody({ body }: { body: string }) {
         srcDoc={body}
         sandbox=""
         className="w-full border-0"
-        style={{ minHeight: "180px" }}
+        style={{ minHeight: "140px" }}
         onLoad={(e) => {
           const el = e.currentTarget;
           try {
             const h = el.contentWindow?.document.body.scrollHeight;
             if (h) el.style.height = h + 20 + "px";
           } catch {
-            /* cross-origin guard, ignore */
+            /* ignore */
           }
         }}
       />
     );
   }
-  return <div className="whitespace-pre-wrap text-sm leading-relaxed">{body}</div>;
+  return <p className="whitespace-pre-wrap">{body}</p>;
 }
 
-function EmailTab() {
-  const { data: threads, isLoading, error } = useThreadsList();
-  const [search, setSearch] = useState("");
-  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+function FlagTag({ kind }: { kind: "promise" | "ar" }) {
+  const promise = kind === "promise";
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+      style={{
+        color: promise ? "var(--whatsapp)" : "var(--primary)",
+        backgroundColor: `color-mix(in oklab, ${promise ? "var(--whatsapp)" : "var(--primary)"} 14%, transparent)`,
+      }}
+    >
+      {promise ? "Promise to pay" : "AR notified"}
+    </span>
+  );
+}
 
-  const filteredThreads = useMemo(() => {
-    const all = threads ?? [];
-    const q = search.toLowerCase();
-    if (!q) return all;
-    return all.filter((t) => [t.client_id, t.client_name].join(" ").toLowerCase().includes(q));
-  }, [threads, search]);
+function EmailInbox() {
+  const { data: clients } = useSuspenseQuery(clientsQuery);
+  const { data: threadsData, isLoading, error } = useThreadsList();
+  const threads = threadsData ?? [];
+  const [active, setActive] = useState<string | null>(null);
+  const activeItem = threads.find((t) => t.thread_id === active) ?? threads[0];
+  const { data: detail, isLoading: detailLoading } = useThreadDetail(
+    activeItem?.thread_id ?? null,
+  );
+  const activeClient = clients.find((c) => c.id === activeItem?.client_id);
 
-  const activeItem =
-    filteredThreads.find((t) => t.thread_id === activeThreadId) ?? filteredThreads[0];
-
-  const { data: detail, isLoading: detailLoading } = useThreadDetail(activeItem?.thread_id || null);
+  const messages = detail?.messages ?? [];
 
   return (
-    <AppShell title="Email" subtitle="Real Gmail threads for overdue collections">
-      <div
-        className="grid grid-cols-1 overflow-hidden rounded-xl bg-card shadow-sm md:grid-cols-[35%_65%]"
-        style={{ height: "calc(100vh - 12rem)" }}
-      >
-        {/* Left panel — thread list */}
-        <div className="flex min-h-0 flex-col border-r border-border bg-secondary">
-          <div className="shrink-0 border-b border-border px-4 py-3">
-            <div className="text-lg font-black text-primary">Email</div>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by client name…"
-              className="mt-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none"
-            />
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {isLoading && <div className="p-4 text-sm text-muted-foreground">Loading…</div>}
-            {error && (
-              <div className="p-4 text-sm text-destructive">Failed to load email threads.</div>
-            )}
-            {!isLoading && filteredThreads.length === 0 && (
-              <div className="p-8 text-center text-muted-foreground">
-                <div className="mb-2 text-2xl">📧</div>
-                <div className="font-medium">No email conversations yet</div>
-              </div>
-            )}
-            {filteredThreads.map((t) => {
-              const isActive = activeItem?.thread_id === t.thread_id;
-              return (
+    <AppShell title="Email Inbox" subtitle="Delivered through Gmail · relayed by n8n">
+      <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-5">
+        <StatCard label="Conversations" value={String(threads.length)} tone="primary" />
+        <StatCard
+          label="Outbound"
+          value={String(threads.filter((t) => t.lastDirection === "outbound").length)}
+        />
+        <StatCard
+          label="Replies received"
+          value={String(threads.filter((t) => t.lastDirection === "inbound").length)}
+        />
+        <StatCard
+          label="Promises to pay"
+          value={String(threads.filter((t) => t.promise_recorded).length)}
+          hint="Client committed to a payment date"
+        />
+        <StatCard
+          label="AR notified"
+          value={String(threads.filter((t) => t.notified_ar).length)}
+          hint="Overdue reminder escalated to AR"
+        />
+      </div>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-[320px_1fr]">
+        <Panel title="Threads" description={`${threads.length} clients`}>
+          <ul className="divide-y divide-border">
+            {threads.map((t) => (
+              <li key={t.thread_id || t.client_id}>
                 <button
-                  key={t.thread_id || t.client_id}
-                  onClick={() => setActiveThreadId(t.thread_id)}
-                  className={`w-full border-b border-border px-4 py-3 text-left hover:bg-card ${
-                    isActive ? "border-l-[3px] border-l-primary bg-card" : "border-l-[3px] border-l-transparent"
+                  onClick={() => setActive(t.thread_id)}
+                  className={`w-full px-4 py-3 text-left transition-colors ${
+                    t.thread_id === activeItem?.thread_id ? "bg-secondary" : "hover:bg-muted"
                   }`}
                 >
-                  <div className="flex items-baseline gap-2">
-                    <div className="flex-1 truncate text-sm font-bold text-foreground">
-                      {t.client_name}
-                    </div>
-                    <div className="text-[10px] text-muted-foreground">
-                      {formatListDate(t.lastMessageAt)}
-                    </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="truncate text-sm font-semibold">{t.client_name}</span>
+                    <span className="shrink-0 text-[11px] text-muted-foreground">
+                      {shortDate(t.lastMessageAt)}
+                    </span>
                   </div>
-                  <div className="truncate text-xs text-muted-foreground">
-                    {t.lastMessagePreview}
-                  </div>
-                  <div className="mt-1 flex gap-1">
-                    {t.promise_recorded && (
-                      <span className="rounded-full bg-success px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
-                        Promise made
-                      </span>
-                    )}
-                    {t.notified_ar && (
-                      <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
-                        Needs AR
-                      </span>
-                    )}
+                  <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+                    {t.lastMessagePreview || "—"}
+                  </p>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {t.promise_recorded ? <FlagTag kind="promise" /> : null}
+                    {t.notified_ar ? <FlagTag kind="ar" /> : null}
                   </div>
                 </button>
-              );
-            })}
-          </div>
-        </div>
+              </li>
+            ))}
+            {isLoading ? (
+              <li className="px-4 py-6 text-sm text-muted-foreground">Loading Gmail threads…</li>
+            ) : null}
+            {error ? (
+              <li className="px-4 py-6 text-sm text-destructive">
+                Could not load Gmail threads from n8n.
+              </li>
+            ) : null}
+            {!isLoading && !error && threads.length === 0 ? (
+              <li className="px-4 py-6 text-sm text-muted-foreground">
+                No Email activity logged yet.
+              </li>
+            ) : null}
+          </ul>
+        </Panel>
 
-        {/* Right panel — real Gmail thread */}
-        <div className="flex min-h-0 flex-col overflow-y-auto bg-muted">
-          {!activeItem ? (
-            <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-              Select a conversation to view
-            </div>
-          ) : detailLoading ? (
-            <div className="p-8 text-sm text-muted-foreground">Loading thread from Gmail…</div>
-          ) : !detail || !detail.messages?.length ? (
-            <div className="p-8 text-sm text-destructive">Could not load this thread from Gmail.</div>
-          ) : (
-            <>
-              <div className="sticky top-0 z-10 border-b border-border bg-card px-6 py-4">
-                <div className="text-lg font-bold text-foreground">
-                  {detail.subject || "(no subject)"}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {detail.messages.length} message{detail.messages.length > 1 ? "s" : ""} ·{" "}
-                  {activeItem.client_name}
-                </div>
-              </div>
-              <div className="space-y-4 p-6">
-                {detail.messages.map((m) => (
+        <Panel
+          title={activeItem?.client_name ?? "No conversation selected"}
+          description={
+            activeClient
+              ? `${peso(activeClient.collection_amount)} outstanding · due ${shortDate(activeClient.due_date)}`
+              : (detail?.subject ?? undefined)
+          }
+          action={
+            activeClient ? (
+              <Link
+                to="/clients/$clientId"
+                params={{ clientId: activeClient.id }}
+                className="text-xs font-semibold text-primary hover:underline"
+              >
+                View client
+              </Link>
+            ) : null
+          }
+        >
+          <ol className="space-y-4 p-4">
+            {messages.map((m) => {
+              const outbound = m.direction === "outbound";
+              return (
+                <li
+                  key={m.messageId}
+                  className={`flex flex-col gap-1 ${outbound ? "items-end" : "items-start"}`}
+                >
+                  <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                    <ChannelBadge channel="email" />
+                    {outbound ? m.to : m.from} · {shortDate(m.date)}
+                  </div>
                   <div
-                    key={m.messageId}
-                    className={`overflow-hidden rounded-lg border border-border bg-card shadow-sm border-l-4 ${
-                      m.direction === "outbound" ? "border-l-primary" : "border-l-success"
+                    className={`max-w-[80%] rounded-xl border px-3.5 py-2.5 text-sm ${
+                      outbound
+                        ? "border-transparent bg-primary text-primary-foreground"
+                        : "border-border bg-muted"
                     }`}
                   >
-                    <div className="flex flex-wrap items-center justify-between gap-1 border-b border-border bg-muted px-4 py-2">
-                      <div className="text-sm">
-                        <span className="font-semibold">{m.from}</span>
-                        <span className="text-muted-foreground"> → </span>
-                        <span className="text-muted-foreground">{m.to}</span>
-                      </div>
-                      <div className="text-xs text-muted-foreground">{formatMsgDate(m.date)}</div>
-                    </div>
-                    <div className="p-4">
-                      <MessageBody body={m.body} />
-                    </div>
-                    {m.attachments?.length > 0 && (
-                      <div className="flex flex-wrap gap-2 px-4 pb-3">
-                        {m.attachments.map((a, i) => (
-                          <span
-                            key={i}
-                            className="flex items-center gap-1 rounded border border-border bg-muted px-2 py-1 text-xs"
-                          >
-                            📎 {a.filename}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                    {m.subject ? (
+                      <p className="mb-1 text-xs font-bold uppercase tracking-wide opacity-80">
+                        {m.subject}
+                      </p>
+                    ) : null}
+                    <MessageBody body={m.body} />
+                    {m.attachments?.length ? (
+                      <p className="mt-2 border-t border-current/20 pt-2 text-xs opacity-90">
+                        {m.attachments.map((a) => a.filename).join(", ")}
+                      </p>
+                    ) : null}
                   </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+                </li>
+              );
+            })}
+            {detailLoading ? (
+              <li className="text-sm text-muted-foreground">Loading thread from Gmail…</li>
+            ) : null}
+            {!detailLoading && messages.length === 0 ? (
+              <li className="text-sm text-muted-foreground">Nothing to show.</li>
+            ) : null}
+          </ol>
+        </Panel>
       </div>
     </AppShell>
   );
