@@ -21,6 +21,7 @@ import { Route as InboxChannelRouteImport } from './routes/inbox.$channel'
 import { Route as ApiPublicN8nConversationRouteImport } from './routes/api/public/n8n-conversation'
 import { Route as ApiPublicN8nLogsRouteImport } from './routes/api/public/n8n-logs'
 import { Route as ApiPublicTelerivetImportRouteImport } from './routes/api/public/telerivet-import'
+import { Route as ApiPublicVapiImportRouteImport } from './routes/api/public/vapi-import'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -84,6 +85,11 @@ const ApiPublicTelerivetImportRoute =
     path: '/api/public/telerivet-import',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicVapiImportRoute = ApiPublicVapiImportRouteImport.update({
+  id: '/api/public/vapi-import',
+  path: '/api/public/vapi-import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/api/public/n8n-conversation': typeof ApiPublicN8nConversationRoute
   '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
   '/api/public/telerivet-import': typeof ApiPublicTelerivetImportRoute
+  '/api/public/vapi-import': typeof ApiPublicVapiImportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/api/public/n8n-conversation': typeof ApiPublicN8nConversationRoute
   '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
   '/api/public/telerivet-import': typeof ApiPublicTelerivetImportRoute
+  '/api/public/vapi-import': typeof ApiPublicVapiImportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/api/public/n8n-conversation': typeof ApiPublicN8nConversationRoute
   '/api/public/n8n-logs': typeof ApiPublicN8nLogsRoute
   '/api/public/telerivet-import': typeof ApiPublicTelerivetImportRoute
+  '/api/public/vapi-import': typeof ApiPublicVapiImportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/api/public/n8n-conversation'
     | '/api/public/n8n-logs'
     | '/api/public/telerivet-import'
+    | '/api/public/vapi-import'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/api/public/n8n-conversation'
     | '/api/public/n8n-logs'
     | '/api/public/telerivet-import'
+    | '/api/public/vapi-import'
   id:
     | '__root__'
     | '/'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/api/public/n8n-conversation'
     | '/api/public/n8n-logs'
     | '/api/public/telerivet-import'
+    | '/api/public/vapi-import'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -186,6 +198,7 @@ export interface RootRouteChildren {
   ApiPublicN8nConversationRoute: typeof ApiPublicN8nConversationRoute
   ApiPublicN8nLogsRoute: typeof ApiPublicN8nLogsRoute
   ApiPublicTelerivetImportRoute: typeof ApiPublicTelerivetImportRoute
+  ApiPublicVapiImportRoute: typeof ApiPublicVapiImportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -274,6 +287,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTelerivetImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/vapi-import': {
+      id: '/api/public/vapi-import'
+      path: '/api/public/vapi-import'
+      fullPath: '/api/public/vapi-import'
+      preLoaderRoute: typeof ApiPublicVapiImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -290,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicN8nConversationRoute: ApiPublicN8nConversationRoute,
   ApiPublicN8nLogsRoute: ApiPublicN8nLogsRoute,
   ApiPublicTelerivetImportRoute: ApiPublicTelerivetImportRoute,
+  ApiPublicVapiImportRoute: ApiPublicVapiImportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
