@@ -22,12 +22,37 @@ const nav = [
 ] as const;
 
 const inboxes = [
-  { to: "/inbox/whatsapp", label: "WhatsApp", icon: MessageSquare },
-  { to: "/inbox/viber", label: "Viber", icon: MessageCircle },
-  { to: "/inbox/sms", label: "SMS", icon: Smartphone },
-  { to: "/inbox/voice", label: "Voice", icon: Phone },
-  { to: "/email", label: "Email", icon: Mail },
+  { channel: "whatsapp", label: "WhatsApp", icon: MessageSquare },
+  { channel: "viber", label: "Viber", icon: MessageCircle },
+  { channel: "sms", label: "SMS", icon: Smartphone },
+  { channel: "email", label: "Email", icon: Mail, to: "/email" },
+  { channel: "voice", label: "Voice", icon: Phone },
 ] as const;
+
+type InboxItem = (typeof inboxes)[number];
+
+function InboxLink({ item, className }: { item: InboxItem; className: string }) {
+  const activeProps = { className: "bg-primary text-primary-foreground hover:bg-primary" };
+  if ("to" in item) {
+    return (
+      <Link to={item.to} className={className} activeProps={activeProps}>
+        <item.icon className="h-4 w-4" />
+        {item.label}
+      </Link>
+    );
+  }
+  return (
+    <Link
+      to="/inbox/$channel"
+      params={{ channel: item.channel }}
+      className={className}
+      activeProps={activeProps}
+    >
+      <item.icon className="h-4 w-4" />
+      {item.label}
+    </Link>
+  );
+}
 
 const linkBase =
   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink-hover hover:text-ink-foreground";
