@@ -25,11 +25,16 @@ const inboxes = [
   { channel: "whatsapp", label: "WhatsApp", icon: MessageSquare },
   { channel: "viber", label: "Viber", icon: MessageCircle },
   { channel: "sms", label: "SMS", icon: Smartphone },
-  { channel: "email", label: "Email", icon: Mail, to: "/email" },
+  { channel: "email", label: "Email", icon: Mail, to: "/email" as const },
   { channel: "voice", label: "Voice", icon: Phone },
-] as const;
+] satisfies InboxItem[];
 
-type InboxItem = (typeof inboxes)[number];
+type InboxItem = {
+  channel: string;
+  label: string;
+  icon: typeof Mail;
+  to?: "/email";
+};
 
 function InboxLink({ item, className }: { item: InboxItem; className: string }) {
   const activeProps = { className: "bg-primary text-primary-foreground hover:bg-primary" };
