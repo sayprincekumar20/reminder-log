@@ -154,14 +154,11 @@ export function AppShell({
               </Link>
             ))}
             {inboxes.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
+              <InboxLink
+                key={item.channel}
+                item={item}
                 className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground"
-                activeProps={{ className: "bg-secondary text-secondary-foreground" }}
-              >
-                {item.label}
-              </Link>
+              />
             ))}
           </nav>
         </header>
