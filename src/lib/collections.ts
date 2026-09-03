@@ -55,6 +55,8 @@ export interface MessageRow {
   error_message: string | null;
   duration_seconds: number | null;
   transcript: string | null;
+  recording_url: string | null;
+  provider_message_id: string | null;
   agent_name: string | null;
   promise_recorded: boolean;
   notified_ar: boolean;
