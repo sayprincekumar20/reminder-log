@@ -24,16 +24,16 @@ const nav = [
 const inboxes = [
   { channel: "whatsapp", label: "WhatsApp", icon: MessageSquare },
   { channel: "viber", label: "Viber", icon: MessageCircle },
-  { channel: "sms", label: "SMS", icon: Smartphone },
+  { channel: "sms", label: "SMS", icon: Smartphone, to: "/sms" as const },
   { channel: "email", label: "Email", icon: Mail, to: "/email" as const },
-  { channel: "voice", label: "Voice", icon: Phone },
+  { channel: "voice", label: "Voice", icon: Phone, to: "/voice" as const },
 ] satisfies InboxItem[];
 
 type InboxItem = {
   channel: string;
   label: string;
   icon: typeof Mail;
-  to?: "/email";
+  to?: "/email" | "/sms" | "/voice";
 };
 
 function InboxLink({ item, className }: { item: InboxItem; className: string }) {
