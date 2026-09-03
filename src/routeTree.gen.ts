@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmailRouteImport } from './routes/email'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as SmsRouteImport } from './routes/sms'
+import { Route as VoiceRouteImport } from './routes/voice'
 import { Route as ApiGmailThreadDetailRouteImport } from './routes/api/gmail-thread-detail'
 import { Route as ApiGmailThreadsListRouteImport } from './routes/api/gmail-threads-list'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
@@ -42,6 +44,16 @@ const QueueRoute = QueueRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SmsRoute = SmsRouteImport.update({
+  id: '/sms',
+  path: '/sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VoiceRoute = VoiceRouteImport.update({
+  id: '/voice',
+  path: '/voice',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGmailThreadDetailRoute = ApiGmailThreadDetailRouteImport.update({
@@ -102,6 +114,8 @@ export interface FileRoutesByFullPath {
   '/email': typeof EmailRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/sms': typeof SmsRoute
+  '/voice': typeof VoiceRoute
   '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
   '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
@@ -118,6 +132,8 @@ export interface FileRoutesByTo {
   '/email': typeof EmailRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/sms': typeof SmsRoute
+  '/voice': typeof VoiceRoute
   '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
   '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
@@ -135,6 +151,8 @@ export interface FileRoutesById {
   '/email': typeof EmailRoute
   '/queue': typeof QueueRoute
   '/reports': typeof ReportsRoute
+  '/sms': typeof SmsRoute
+  '/voice': typeof VoiceRoute
   '/api/gmail-thread-detail': typeof ApiGmailThreadDetailRoute
   '/api/gmail-threads-list': typeof ApiGmailThreadsListRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
@@ -153,6 +171,8 @@ export interface FileRouteTypes {
     | '/email'
     | '/queue'
     | '/reports'
+    | '/sms'
+    | '/voice'
     | '/api/gmail-thread-detail'
     | '/api/gmail-threads-list'
     | '/clients/$clientId'
@@ -169,6 +189,8 @@ export interface FileRouteTypes {
     | '/email'
     | '/queue'
     | '/reports'
+    | '/sms'
+    | '/voice'
     | '/api/gmail-thread-detail'
     | '/api/gmail-threads-list'
     | '/clients/$clientId'
@@ -185,6 +207,8 @@ export interface FileRouteTypes {
     | '/email'
     | '/queue'
     | '/reports'
+    | '/sms'
+    | '/voice'
     | '/api/gmail-thread-detail'
     | '/api/gmail-threads-list'
     | '/clients/$clientId'
@@ -202,6 +226,8 @@ export interface RootRouteChildren {
   EmailRoute: typeof EmailRoute
   QueueRoute: typeof QueueRoute
   ReportsRoute: typeof ReportsRoute
+  SmsRoute: typeof SmsRoute
+  VoiceRoute: typeof VoiceRoute
   ApiGmailThreadDetailRoute: typeof ApiGmailThreadDetailRoute
   ApiGmailThreadsListRoute: typeof ApiGmailThreadsListRoute
   ClientsClientIdRoute: typeof ClientsClientIdRoute
@@ -242,6 +268,20 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sms': {
+      id: '/sms'
+      path: '/sms'
+      fullPath: '/sms'
+      preLoaderRoute: typeof SmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/voice': {
+      id: '/voice'
+      path: '/voice'
+      fullPath: '/voice'
+      preLoaderRoute: typeof VoiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/gmail-thread-detail': {
@@ -322,6 +362,8 @@ const rootRouteChildren: RootRouteChildren = {
   EmailRoute: EmailRoute,
   QueueRoute: QueueRoute,
   ReportsRoute: ReportsRoute,
+  SmsRoute: SmsRoute,
+  VoiceRoute: VoiceRoute,
   ApiGmailThreadDetailRoute: ApiGmailThreadDetailRoute,
   ApiGmailThreadsListRoute: ApiGmailThreadsListRoute,
   ClientsClientIdRoute: ClientsClientIdRoute,
