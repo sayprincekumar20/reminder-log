@@ -89,12 +89,15 @@ function parseTranscript(transcript: string | null): Turn[] {
   return turns.filter((t) => t.text);
 }
 
+// Vapi assistant c6f30764-7b72-4b97-8e0b-d09e119118f3 = "Accounting Assistant"
+const ASSISTANT_NAME = "Accounting Assistant";
+
 function VoiceLogs() {
   const { data: clients } = useSuspenseQuery(clientsQuery);
   const { data: messages } = useSuspenseQuery(messagesQuery);
 
   const calls = messages
-    .filter((m) => m.channel === "voice")
+    .filter((m) => m.channel === "voice" && (m.agent_name ?? "") === ASSISTANT_NAME)
     .slice()
     .sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime());
 
@@ -102,6 +105,7 @@ function VoiceLogs() {
   const activeCall = calls.find((c) => c.id === active) ?? null;
   const activeClient = clients.find((c) => c.id === activeCall?.client_id);
   const turns = parseTranscript(activeCall?.transcript ?? null);
+
 
   const completed = calls.filter((c) => c.status === "completed").length;
   const noAnswer = calls.filter((c) => c.status !== "completed").length;
