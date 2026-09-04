@@ -190,7 +190,7 @@ function VoiceLogs() {
                       {formatDuration(c.duration_seconds)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
-                      {startTime(c.occurred_at)}
+                      <ClientTime value={c.occurred_at} />
                     </td>
                   </tr>
                 );
