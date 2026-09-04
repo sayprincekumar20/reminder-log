@@ -290,10 +290,10 @@ function EmailInbox() {
               );
             })}
             {detailLoading ? (
-              <li className="text-sm text-muted-foreground">Loading thread from Gmail…</li>
+              <li className="px-5 py-6 text-sm text-muted-foreground">Loading thread from Gmail…</li>
             ) : null}
             {!detailLoading && messages.length === 0 ? (
-              <li className="text-sm text-muted-foreground">Nothing to show.</li>
+              <li className="px-5 py-6 text-sm text-muted-foreground">Nothing to show.</li>
             ) : null}
           </ol>
         </Panel>
