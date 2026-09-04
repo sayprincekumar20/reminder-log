@@ -124,6 +124,33 @@ export function Amount({ value }: { value: number }) {
   return <span className="font-semibold tabular-nums">{peso(value)}</span>;
 }
 
+/** Locale/timezone-dependent timestamp rendered only on the client (avoids SSR mismatch). */
+export function ClientTime({
+  value,
+  options,
+}: {
+  value: string;
+  options?: Intl.DateTimeFormatOptions;
+}) {
+  const [label, setLabel] = useState("");
+  useEffect(() => {
+    setLabel(
+      new Date(value).toLocaleString(
+        "en-PH",
+        options ?? {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        },
+      ),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return <>{label}</>;
+}
+
 export function TimeAgo({ value }: { value: string }) {
   const [label, setLabel] = useState("");
   useEffect(() => {
