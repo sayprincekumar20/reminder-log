@@ -208,121 +208,135 @@ function VoiceLogs() {
       </section>
 
       {activeCall ? (
-        <section className="surface-card mt-5 overflow-hidden">
-          <header className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-5 py-4">
-            <div>
-              <h2 className="text-base font-bold">
-                {startTime(activeCall.occurred_at)} ·{" "}
-                {activeCall.direction === "inbound" ? "inboundPhoneCall" : "outboundPhoneCall"}
-              </h2>
-              <dl className="mt-2 space-y-1 text-xs text-muted-foreground">
-                <div>
-                  <span className="font-semibold text-foreground">Call ID:</span>{" "}
-                  <span className="font-mono">{activeCall.provider_message_id ?? activeCall.id}</span>
+        <>
+          <div
+            onClick={() => setActive(null)}
+            className="fixed inset-0 z-40 bg-foreground/40 backdrop-blur-[2px] animate-in fade-in"
+          />
+          <aside
+            role="dialog"
+            aria-label="Call detail"
+            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-xl flex-col overflow-y-auto border-l border-border bg-card shadow-2xl animate-in slide-in-from-right duration-200"
+          >
+            <header className="sticky top-0 z-10 flex flex-wrap items-start justify-between gap-3 border-b border-border bg-card px-5 py-4">
+              <div>
+                <h2 className="text-base font-bold">
+                  <ClientTime value={activeCall.occurred_at} /> ·{" "}
+                  {activeCall.direction === "inbound" ? "inboundPhoneCall" : "outboundPhoneCall"}
+                </h2>
+                <dl className="mt-2 space-y-1 text-xs text-muted-foreground">
+                  <div>
+                    <span className="font-semibold text-foreground">Call ID:</span>{" "}
+                    <span className="font-mono">
+                      {activeCall.provider_message_id ?? activeCall.id}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-foreground">Assistant:</span>{" "}
+                    {activeCall.agent_name ?? "Assistant"}
+                  </div>
+                  <div>
+                    <span className="font-semibold text-foreground">Customer:</span>{" "}
+                    {activeClient?.client_name ?? "Unknown"} · {activeClient?.phone ?? "—"}
+                    {activeClient ? ` · ${peso(activeClient.collection_amount)} outstanding` : ""}
+                  </div>
+                  <div>
+                    <span className="font-semibold text-foreground">Ended:</span>{" "}
+                    {endedReason(activeCall)}
+                  </div>
+                </dl>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <ChannelBadge channel="voice" />
+                  <StatusPill status={activeCall.status} />
+                  <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold tabular-nums">
+                    {formatDuration(activeCall.duration_seconds)}
+                  </span>
                 </div>
-                <div>
-                  <span className="font-semibold text-foreground">Assistant:</span>{" "}
-                  {activeCall.agent_name ?? "Assistant"}
-                </div>
-                <div>
-                  <span className="font-semibold text-foreground">Customer:</span>{" "}
-                  {activeClient?.client_name ?? "Unknown"} · {activeClient?.phone ?? "—"}
-                  {activeClient ? ` · ${peso(activeClient.collection_amount)} outstanding` : ""}
-                </div>
-                <div>
-                  <span className="font-semibold text-foreground">Ended:</span>{" "}
-                  {endedReason(activeCall)}
-                </div>
-              </dl>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold tabular-nums">
-                Duration: {formatDuration(activeCall.duration_seconds)}
-              </span>
-              {activeClient ? (
-                <Link
-                  to="/clients/$clientId"
-                  params={{ clientId: activeClient.id }}
-                  className="text-xs font-semibold text-primary hover:underline"
+              </div>
+              <div className="flex items-center gap-3">
+                {activeClient ? (
+                  <Link
+                    to="/clients/$clientId"
+                    params={{ clientId: activeClient.id }}
+                    className="text-xs font-semibold text-primary hover:underline"
+                  >
+                    View client
+                  </Link>
+                ) : null}
+                <button
+                  onClick={() => setActive(null)}
+                  aria-label="Close call detail"
+                  className="rounded-md p-1 text-muted-foreground hover:bg-muted"
                 >
-                  View client
-                </Link>
-              ) : null}
-              <button
-                onClick={() => setActive(null)}
-                aria-label="Close call detail"
-                className="rounded-md p-1 text-muted-foreground hover:bg-muted"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </header>
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </header>
 
-          <div className="space-y-5 p-5">
-            <div>
-              <h3 className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                Recording
-              </h3>
-              {activeCall.recording_url ? (
-                <audio controls src={activeCall.recording_url} className="w-full" />
-              ) : (
-                <p className="rounded-lg border border-dashed border-border px-4 py-3 text-xs text-muted-foreground">
-                  No recording available for this call.
-                </p>
-              )}
-            </div>
-
-            <div>
-              <h3 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                Transcript
-              </h3>
-              {turns.length ? (
-                <div className="space-y-3">
-                  {turns.map((t, i) => (
-                    <div
-                      key={i}
-                      className={`flex ${t.role === "user" ? "justify-end" : "justify-start"}`}
-                    >
-                      <div
-                        className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
-                          t.role === "user"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted text-foreground"
-                        }`}
-                      >
-                        <p
-                          className={`mb-1 text-[11px] font-bold uppercase tracking-wide ${
-                            t.role === "user" ? "opacity-80" : "text-primary"
-                          }`}
-                        >
-                          {t.role === "user" ? "Client" : (activeCall.agent_name ?? "Assistant")}
-                        </p>
-                        {t.text}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : activeCall.transcript ? (
-                <div className="rounded-xl border border-border bg-muted p-4 text-sm whitespace-pre-wrap">
-                  {activeCall.transcript}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  No transcript — this call did not connect.
-                </p>
-              )}
-            </div>
-
-            {activeCall.body && activeCall.body !== activeCall.transcript ? (
+            <div className="space-y-5 p-5">
               <div>
                 <h3 className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                  Summary
+                  Recording
                 </h3>
-                <p className="text-sm text-muted-foreground">{activeCall.body}</p>
+                {activeCall.recording_url ? (
+                  <audio controls src={activeCall.recording_url} className="w-full" />
+                ) : (
+                  <p className="rounded-lg border border-dashed border-border px-4 py-3 text-xs text-muted-foreground">
+                    No recording available for this call.
+                  </p>
+                )}
               </div>
-            ) : null}
-          </div>
-        </section>
+
+              <div>
+                <h3 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                  Transcript
+                </h3>
+                {turns.length ? (
+                  <ol className="space-y-4">
+                    {turns.map((t, i) => (
+                      <li
+                        key={i}
+                        className={`flex flex-col gap-1 ${t.role === "user" ? "items-end" : "items-start"}`}
+                      >
+                        <div className="text-[11px] text-muted-foreground">
+                          {t.role === "user"
+                            ? (activeClient?.client_name ?? "Client")
+                            : (activeCall.agent_name ?? "Assistant")}
+                        </div>
+                        <div
+                          className={`max-w-[80%] rounded-xl border px-3.5 py-2.5 text-sm ${
+                            t.role === "user"
+                              ? "border-transparent bg-primary text-primary-foreground"
+                              : "border-border bg-muted"
+                          }`}
+                        >
+                          {t.text}
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                ) : activeCall.transcript ? (
+                  <div className="rounded-xl border border-border bg-muted p-4 text-sm whitespace-pre-wrap">
+                    {activeCall.transcript}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No transcript — this call did not connect.
+                  </p>
+                )}
+              </div>
+
+              {activeCall.body && activeCall.body !== activeCall.transcript ? (
+                <div>
+                  <h3 className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                    Summary
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{activeCall.body}</p>
+                </div>
+              ) : null}
+            </div>
+          </aside>
+        </>
       ) : null}
     </AppShell>
   );
