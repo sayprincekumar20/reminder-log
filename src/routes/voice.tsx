@@ -106,6 +106,15 @@ function VoiceLogs() {
   const activeClient = clients.find((c) => c.id === activeCall?.client_id);
   const turns = parseTranscript(activeCall?.transcript ?? null);
 
+  useEffect(() => {
+    if (!activeCall) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActive(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [activeCall]);
+
 
   const completed = calls.filter((c) => c.status === "completed").length;
   const noAnswer = calls.filter((c) => c.status !== "completed").length;
