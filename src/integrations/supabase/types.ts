@@ -182,6 +182,7 @@ export type Database = {
       messages: {
         Row: {
           agent_name: string | null
+          assistant_id: string | null
           body: string | null
           channel: string
           client_id: string | null
@@ -205,6 +206,7 @@ export type Database = {
         }
         Insert: {
           agent_name?: string | null
+          assistant_id?: string | null
           body?: string | null
           channel: string
           client_id?: string | null
@@ -228,6 +230,7 @@ export type Database = {
         }
         Update: {
           agent_name?: string | null
+          assistant_id?: string | null
           body?: string | null
           channel?: string
           client_id?: string | null
