@@ -40,15 +40,6 @@ function formatDuration(seconds: number | null | undefined): string {
   return `${m}m ${s.toString().padStart(2, "0")}s`;
 }
 
-function startTime(value: string) {
-  return new Date(value).toLocaleString("en-PH", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 function shortId(id: string | null) {
   if (!id) return "—";
