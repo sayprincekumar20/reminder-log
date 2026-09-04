@@ -231,36 +231,60 @@ function EmailInbox() {
             ) : null
           }
         >
-          <ol className="space-y-4 p-4">
+          {detail?.subject ? (
+            <div className="flex items-center gap-3 border-b border-border px-5 py-4">
+              <h3 className="text-lg font-bold leading-tight">{detail.subject}</h3>
+              <ChannelBadge channel="email" />
+              <span className="ml-auto text-xs text-muted-foreground">
+                {messages.length} message{messages.length === 1 ? "" : "s"}
+              </span>
+            </div>
+          ) : null}
+          <ol className="divide-y divide-border">
             {messages.map((m) => {
               const outbound = m.direction === "outbound";
+              const sender = outbound ? m.from : m.from;
+              const name = (sender.split("<")[0] || sender).replace(/"/g, "").trim() || sender;
+              const initial = name.charAt(0).toUpperCase();
               return (
-                <li
-                  key={m.messageId}
-                  className={`flex flex-col gap-1 ${outbound ? "items-end" : "items-start"}`}
-                >
-                  <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                    <ChannelBadge channel="email" />
-                    {outbound ? m.to : m.from} · {shortDate(m.date)}
-                  </div>
-                  <div
-                    className={`max-w-[80%] rounded-xl border px-3.5 py-2.5 text-sm ${
-                      outbound
-                        ? "border-transparent bg-primary text-primary-foreground"
-                        : "border-border bg-muted"
-                    }`}
-                  >
-                    {m.subject ? (
-                      <p className="mb-1 text-xs font-bold uppercase tracking-wide opacity-80">
-                        {m.subject}
-                      </p>
-                    ) : null}
-                    <MessageBody body={m.body} />
-                    {m.attachments?.length ? (
-                      <p className="mt-2 border-t border-current/20 pt-2 text-xs opacity-90">
-                        {m.attachments.map((a) => a.filename).join(", ")}
-                      </p>
-                    ) : null}
+                <li key={m.messageId} className="px-5 py-4">
+                  <div className="flex items-start gap-3">
+                    <span
+                      className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                      style={{
+                        color: outbound ? "var(--primary-foreground)" : "var(--foreground)",
+                        backgroundColor: outbound
+                          ? "var(--primary)"
+                          : "color-mix(in oklab, var(--foreground) 10%, transparent)",
+                      }}
+                    >
+                      {initial}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-baseline gap-x-2">
+                        <span className="truncate text-sm font-semibold">{name}</span>
+                        <span className="truncate text-xs text-muted-foreground">{sender}</span>
+                        <span className="ml-auto shrink-0 text-xs text-muted-foreground">
+                          {shortDate(m.date)}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 text-xs text-muted-foreground">to {m.to}</p>
+                      <div className="mt-3 text-sm leading-relaxed">
+                        <MessageBody body={m.body} />
+                      </div>
+                      {m.attachments?.length ? (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {m.attachments.map((a) => (
+                            <span
+                              key={a.filename}
+                              className="rounded-lg border border-border bg-muted px-2.5 py-1 text-xs"
+                            >
+                              {a.filename}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 </li>
               );
