@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PhoneOutgoing, PhoneIncoming, X } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { StatCard } from "@/components/collections/Bits";
+import { StatCard, ClientTime, ChannelBadge, StatusPill } from "@/components/collections/Bits";
 import { clientsQuery, messagesQuery, peso, type MessageRow } from "@/lib/collections";
 
 export const Route = createFileRoute("/voice")({
