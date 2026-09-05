@@ -163,6 +163,7 @@ export const Route = createFileRoute("/api/public/vapi-import")({
             recording_url: call.artifact?.recordingUrl ?? call.recordingUrl ?? null,
             transcript,
             agent_name: call.assistant?.name ?? "Accounting Assistant",
+            assistant_id: call.assistantId ?? assistant_id ?? null,
             occurred_at: call.startedAt ?? call.createdAt ?? new Date().toISOString(),
           });
         }
