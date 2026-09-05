@@ -80,7 +80,8 @@ function parseTranscript(transcript: string | null): Turn[] {
   return turns.filter((t) => t.text);
 }
 
-// Vapi assistant c6f30764-7b72-4b97-8e0b-d09e119118f3 = "Accounting Assistant"
+// Vapi assistant "Accounting Assistant"
+const ASSISTANT_ID = "c6f30764-7b72-4b97-8e0b-d09e119118f3";
 const ASSISTANT_NAME = "Accounting Assistant";
 
 function VoiceLogs() {
@@ -88,7 +89,13 @@ function VoiceLogs() {
   const { data: messages } = useSuspenseQuery(messagesQuery);
 
   const calls = messages
-    .filter((m) => m.channel === "voice" && (m.agent_name ?? "") === ASSISTANT_NAME)
+    .filter(
+      (m) =>
+        m.channel === "voice" &&
+        (m.assistant_id
+          ? m.assistant_id === ASSISTANT_ID
+          : (m.agent_name ?? "") === ASSISTANT_NAME),
+    )
     .slice()
     .sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime());
 
