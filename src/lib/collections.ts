@@ -58,6 +58,7 @@ export interface MessageRow {
   recording_url: string | null;
   provider_message_id: string | null;
   agent_name: string | null;
+  assistant_id: string | null;
   promise_recorded: boolean;
   notified_ar: boolean;
   has_attachment: boolean;

@@ -103,6 +103,7 @@ export const Route = createFileRoute("/api/public/vapi-webhook")({
             recording_url: msg?.artifact?.recordingUrl ?? msg?.recordingUrl ?? null,
             transcript,
             agent_name: call?.assistant?.name ?? msg?.assistant?.name ?? "Accounting Assistant",
+            assistant_id: call?.assistantId ?? msg?.assistantId ?? null,
             occurred_at: msg?.startedAt ?? call?.startedAt ?? new Date().toISOString(),
           },
           { onConflict: "channel,provider_message_id" },
